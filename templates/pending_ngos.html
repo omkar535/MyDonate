@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NGO Requests</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+        }
+        h1 {
+            margin-top: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .card {
+            margin: 15px;
+        }
+        .sidebar {
+            height: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            background-color: #343a40; /* Dark background for the sidebar */
+            padding: 20px;
+            color: white;
+        }
+        .sidebar h5 {
+            color: #ffffff; /* White color for the title */
+            margin-bottom: 20px;
+        }
+        .sidebar .nav-link {
+            color: #ffffff; /* White text for links */
+            padding: 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s; /* Smooth transition for hover */
+        }
+        .sidebar .nav-link:hover {
+            background-color: #495057; /* Slightly lighter color on hover */
+        }
+        .main-content {
+            margin-left: 270px; /* Adjust margin to account for the sidebar width */
+            padding: 20px; /* Add some padding to the main content */
+        }
+        .alert-container {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h5>Admin Panel</h5>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('all_ngos') }}">All NGOs</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('accepted_ngos') }}">Accepted NGOs</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('pending_ngos') }}">Pending Requests NGOs</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('all_donors') }}">All Donors</a>
+            </li>
+        </ul>
+    </div>
+    <div class="main-content">
+        <div class="container">
+            <!-- Logout Button -->
+            <div class="d-flex justify-content-end mt-3">
+                <a href="{{ url_for('logout') }}" class="btn btn-secondary">Logout</a>
+            </div>
+
+            <h1>Pending NGO Requests</h1>
+
+            <!-- Display Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="alert-container">
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            {% if ngos and ngos|length > 0 %}
+                <div class="row">
+                    {% for ngo in ngos %}
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6 class="card-text"><strong>Name:</strong> {{ ngo.name }}</h6>
+                                    <p class="card-text"><strong>Email:</strong> {{ ngo.email }}</p>
+                                    <p class="card-text"><strong>Contact:</strong> {{ ngo.contactNumber }}</p>
+                                    <p class="card-text"><strong>Address:</strong> {{ ngo.address }}</p>
+                                    <p class="card-text"><strong>Pincode:</strong> {{ ngo.pincode }}</p>
+                                    <p class="card-text"><strong>Role:</strong> {{ ngo.role }}</p>
+                                    <p class="card-text"><strong>Document:</strong> <a href="{{ ngo.document }}" target="_blank">View Document</a></p>
+                                    
+                                    <form action="{{ url_for('accept_ngos', ngo_id=ngo.id) }}" method="POST" class="d-inline">
+                                        <button type="submit" class="btn btn-success">Accept</button>
+                                    </form>
+                                    <form action="{{ url_for('reject_ngos', ngo_id=ngo.id) }}" method="POST" class="d-inline">
+                                        <button type="submit" class="btn btn-danger">Reject</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="alert alert-warning" role="alert">
+                    No pending NGO requests.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

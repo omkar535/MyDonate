@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NGO Requests</title>
+</head>
+<body>
+    <h1>NGO Requests</h1>
+    <table>
+        <tr>
+            <th>NGO Name</th>
+            <th>Email</th>
+            <th>Action</th>
+        </tr>
+        {% for ngo in ngos %}
+        <tr>
+            <td>{{ ngo.to_dict()['name'] }}</td>
+            <td>{{ ngo.to_dict()['email'] }}</td>
+            <td>
+                <form method="POST" action="/accept_ngos/{{ ngo.id }}">
+                    <button type="submit">Accept</button>
+                </form>
+                <form method="POST" action="/reject_ngos/{{ ngo.id }}">
+                    <button type="submit">Reject</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
